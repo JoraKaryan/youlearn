@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Student Detail</h1>
+    
+    <!-- Student Details -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3>{{ student.name }} {{ student.surname }}</h3>
+            <p><strong>Group:</strong> {{ student.group }}</p>
+            <p><strong>Birthday:</strong> {{ student.birthday }}</p>
+            <p><strong>Phone:</strong> {{ student.phone }}</p>
+            <p><strong>ID Number:</strong> {{ student.id }}</p>
+            <p><strong>Phone:</strong> {{ student.phone }}</p>
+            <p><strong>Passport:</strong> {{ student.passport }}</p>
+            <p><strong>Free:</strong> {% if student.is_free %}Yes{% else %}No{% endif %}</p>
+            
+            <a href="{% url 'students_list' %}" class="btn btn-secondary mt-3">Back to Student List</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
