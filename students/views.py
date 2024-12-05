@@ -7,7 +7,6 @@ def students_list(request):
     return render(request, 'students/students_list.html', {'students': students})
 
 def student_detail(request, student_id):
-    # Fetch the student using the given student_id or return 404 if not found
     student = get_object_or_404(Student, id=student_id)
     
     return render(request, 'students/student_detail.html', {'student': student})

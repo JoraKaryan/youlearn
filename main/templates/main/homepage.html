@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<link rel="icon" type="image/x-icon" href="{% static '/images/favicon.ico' %}">
+<link href="{% static '/css/style.css' %}" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
+<div class="container-fluid px-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="bg-gradient-primary text-white p-5 rounded-3 shadow-lg">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="display-4 fw-bold">Students Management Dashboard</h1>
+                        <p class="lead mb-0">Intelligent platform for comprehensive educational management</p>
+                    </div>
+                    <div class="d-none d-md-block">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3 text-end">
+                                <small class="d-block">Today's Date</small>
+                                <h4 id="currentDate" class="mb-0"></h4>
+                            </div>
+                            <div class="rounded-circle bg-white p-2 shadow">
+                                <i class="fas fa-calendar-alt fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-0 h-100 hover-lift">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle bg-soft-primary me-3">
+                            <i class="fas fa-user-graduate text-primary fa-2x"></i>
+                        </div>
+                        <h5 class="card-title mb-0">Student Management</h5>
+                    </div>
+                    <p class="card-text text-muted">Advanced student tracking with real-time analytics and comprehensive profile management.</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge bg-soft-primary text-primary">
+                            <i class="fas fa-chart-line me-1"></i> Smart Tracking
+                        </span>
+                        <a href="/students/" class="btn btn-outline-primary btn-sm">Explore</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 h-100 hover-lift">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle bg-soft-success me-3">
+                            <i class="fas fa-chalkboard-teacher text-success fa-2x"></i>
+                        </div>
+                        <h5 class="card-title mb-0">Tutor Management</h5>
+                    </div>
+                    <p class="card-text text-muted">Intelligent scheduling, performance tracking, and seamless communication tools.</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge bg-soft-success text-success">
+                            <i class="fas fa-magic me-1"></i> AI Insights
+                        </span>
+                        <a href="/tutors/" class="btn btn-outline-success btn-sm">Explore</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 h-100 hover-lift">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle bg-soft-info me-3">
+                            <i class="fas fa-users text-info fa-2x"></i>
+                        </div>
+                        <h5 class="card-title mb-0">Group Management</h5>
+                    </div>
+                    <p class="card-text text-muted">Dynamic group creation, performance monitoring, and collaborative learning spaces.</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge bg-soft-info text-info">
+                            <i class="fas fa-network-wired me-1"></i> Connected Learning
+                        </span>
+                        <a href="/groups/" class="btn btn-outline-info btn-sm">Explore</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Analytics</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="fas fa-graduation-cap fa-2x text-warning"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Total Students</small>
+                                    <h4 class="mb-0">1,245</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="fas fa-chalkboard-teacher fa-2x text-success"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Active Tutors</small>
+                                    <h4 class="mb-0">87</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="fas fa-users fa-2x text-primary"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Study Groups</small>
+                                    <h4 class="mb-0">42</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-soft-secondary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Quick Actions</h5>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>Add New Student
+                        </button>
+                        <button class="btn btn-outline-success">
+                            <i class="fas fa-file-upload me-2"></i>Import Data
+                        </button>
+                        <button class="btn btn-outline-info">
+                            <i class="fas fa-cog me-2"></i>System Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Date Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateElement = document.getElementById('currentDate');
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateElement.textContent = now.toLocaleDateString('en-US', options);
+    });
+</script>
+<div>
+
+</div>
+{% endblock %}

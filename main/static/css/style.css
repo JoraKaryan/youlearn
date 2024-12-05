@@ -1,0 +1,20 @@
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+}
+.icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.bg-soft-primary { background-color: rgba(37, 117, 252, 0.1); }
+.bg-soft-success { background-color: rgba(40, 167, 69, 0.1); }
+.bg-soft-info { background-color: rgba(23, 162, 184, 0.1); }
+.hover-lift {
+    transition: transform 0.3s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-10px);
+}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mt-4">Groups List</h1>
+
+        <!-- Add Student Button -->
+        <a href="{% url 'group_add' %}" class="btn btn-primary mb-3">Add Group</a>
+
+        <!-- Students Table -->
+        <table class="table table-bordered table-hover mt-3">
+            <thead class="table-primary">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Duration</th>
+                    <th>Price</th>
+                    <th>Tutor</th>
+                    <th>Course</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for group in groups %}
+                <tr>
+                    <td>{{ group.id }}</td>
+                    <td>{{ group.name }}</td>
+                    <td>{{ group.duration }}</td>
+                    <td>{{ group.price }}</td>
+                    <td>{{ group.tutor }}</td>
+                    <td>{{ group.course }}</td>
+                    <td>
+                        <a href="{% url 'group_edit' group.id %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'group_detail' group.id %}" class="btn btn-info btn-sm">Details</a>
+                        <a href="{% url 'group_delete' group.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this group?');">Delete</a>
+
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
