@@ -4,5 +4,5 @@ from .models import Group
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ['name', 'duration', 'price', 'tutor', 'course', 'id']
+        fields = ['name', 'tutor', 'course', 'id']
         

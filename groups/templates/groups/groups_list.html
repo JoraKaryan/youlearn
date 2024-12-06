@@ -5,17 +5,13 @@
     <div class="col-12">
         <h1 class="mt-4">Groups List</h1>
 
-        <!-- Add Student Button -->
         <a href="{% url 'group_add' %}" class="btn btn-primary mb-3">Add Group</a>
 
-        <!-- Students Table -->
         <table class="table table-bordered table-hover mt-3">
             <thead class="table-primary">
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Duration</th>
-                    <th>Price</th>
                     <th>Tutor</th>
                     <th>Course</th>
                     <th>Actions</th>
@@ -26,8 +22,6 @@
                 <tr>
                     <td>{{ group.id }}</td>
                     <td>{{ group.name }}</td>
-                    <td>{{ group.duration }}</td>
-                    <td>{{ group.price }}</td>
                     <td>{{ group.tutor }}</td>
                     <td>{{ group.course }}</td>
                     <td>
