@@ -41,8 +41,9 @@ def student_add(request):
             student = form.save(commit=False)
             # Link with a User (modify this logic as per your requirements)
             user = User.objects.create_user(
-                username=form.cleaned_data['passport'],  # Example: Use passport as username
-                password='defaultpassword'  # Set a default password (should be updated later)
+                username=form.cleaned_data['email'],
+                password='defaultpassword',  # Set a default password (should be updated later)
+                email=form.cleaned_data['email'], 
             )
             student.user = user
             student.save()

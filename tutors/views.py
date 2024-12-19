@@ -38,8 +38,9 @@ def tutor_add(request):
             tutor = form.save(commit=False)
             # Create and associate a User with the Tutor
             user = User.objects.create_user(
-                username=form.cleaned_data['name'],  # Example: Use name as username
-                password='defaultpassword'  # Set a default password (should be updated later)
+                username=form.cleaned_data['email'],
+                password='defaultpassword',  # Set a default password (should be updated later)
+                email=form.cleaned_data['email'],
             )
             tutor.user = user
             tutor.save()
