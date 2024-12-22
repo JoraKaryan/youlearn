@@ -8,6 +8,7 @@ from django.shortcuts import render
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
+    path('', include('accounts.urls')),
     path('', include('students.urls')),
     path('', include('courses.urls')),
     path('', include('groups.urls')),
