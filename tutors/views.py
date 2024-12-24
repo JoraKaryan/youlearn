@@ -28,6 +28,7 @@ def tutor_add(request):
                         email=form.cleaned_data['email'],
                         password='defaultpassword',  # Set a default password (should be updated later)
                         username=form.cleaned_data['email'],  # Assuming email is used as username
+                        role='tutor'
                     )
                     user.save()  # Ensure the user is saved before creating the tutor
 
