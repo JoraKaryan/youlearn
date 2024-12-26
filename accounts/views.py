@@ -1,54 +1,78 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
+from django.contrib import messages
 from django.db import transaction
-from .forms import CustomUserCreationForm
-
-def signup_view(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('students_list')  # Redirect based on role
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'registration/signup.html', {'form': form})
+from .forms import CustomUserCreationForm, CustomLoginForm
+from .models import CustomUser
+from students.models import Student
+from tutors.models import Tutor
 
 
-User = get_user_model()  # Use the custom user model
-
-def student_add(request):
+def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             try:
-                # Step 1: Use transaction to ensure both user and student are saved correctly
                 with transaction.atomic():
-                    # Step 2: Create and save the CustomUser first
-                    user = User.objects.create_user(
+                    # Create the user with a hashed password
+                    user = CustomUser.objects.create_user(
                         email=form.cleaned_data['email'],
-                        password='defaultpassword',  # Set a default password (should be updated later)
-                        username=form.cleaned_data['email'],  # Assuming email is used as username
+                        password=form.cleaned_data['password'],
+                        username=form.cleaned_data['email'],
+                        role=form.cleaned_data['role'],
                     )
-                    user.save()  # Ensure the user is saved before creating the student
 
-                    # Step 3: Create the Student instance and associate it with the user
-                    student = form.save(commit=False)  # Don't save the student yet
-                    student.user = user  # Associate the created user with the student
-                    student.save()  # Save the student
+                    # Common fields for both Student and Tutor
+                    common_fields = {
+                        'user': user,
+                        'name': form.cleaned_data['name'],
+                        'surname': form.cleaned_data['surname'],
+                        'birthday': form.cleaned_data.get('birthday'),
+                        'phone': form.cleaned_data.get('phone', '')
+                    }
 
-                return redirect('personal_page')  # Redirect to the students list or desired page
+                    if user.role == 'student':
+                        # Add passport only for students
+                        common_fields['passport'] = form.cleaned_data['passport']
+                        Student.objects.create(**common_fields)
+                    elif user.role == 'tutor':
+                        Tutor.objects.create(**common_fields)
+
+                    # Optionally log the user in
+                    login(request, user)
+                    return redirect('personal_page')
+
             except Exception as e:
-                # Handle any exceptions that occur during the transaction
                 print(f"Error: {e}")
-                return render(request, 'registration/signup.html', {'form': form, 'error': str(e)})
+                # Log the error (avoid displaying detailed errors to the user)
+                return render(request, 'registration/register.html', {
+                    'form': form,
+                    'error': 'An error occurred during registration. Please try again.'
+                })
 
     else:
+        print('------------GET--------------')
         form = CustomUserCreationForm()
 
-    return render(request, 'personal_page.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form})
+
+def login_view(request):
+    if request.method == 'POST':
+        form = CustomLoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')  # Redirect to your desired page after login
+            else:
+                messages.error(request, 'Invalid email or password.')
+    else:
+        form = CustomLoginForm()
+
+    return render(request, 'registration/login.html', {'form': form})
 
 @login_required
 def dashboard_view(request):

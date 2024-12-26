@@ -38,7 +38,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -50,6 +49,7 @@ MIDDLEWARE = [
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 
 ROOT_URLCONF = 'youlearn.urls'
+LOGIN_URL = 'login'
 
 TEMPLATES = [
     {

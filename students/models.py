@@ -12,7 +12,7 @@ class Student(models.Model):
     surname = models.CharField(max_length=50)
     group = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True, related_name='students')
     is_free = models.BooleanField(default=False)
-    birthday = models.DateField()
+    birthday = models.DateField(null=True)
     phone = models.CharField(max_length=15, null=True, default='')
     passport = models.CharField(max_length=20, unique=True)
 

@@ -6,16 +6,19 @@ from django.db import transaction
 from .models import Tutor
 from .forms import TutorForm
 
+@login_required
 def tutors_list(request):
     tutors = Tutor.objects.select_related('user').all()  # Optimize query with select_related
     return render(request, 'tutors/tutors_list.html', {'tutors': tutors})
 
+@login_required
 def tutor_detail(request, tutor_id):
     tutor = get_object_or_404(Tutor.objects.select_related('user'), id=tutor_id)
     return render(request, 'tutors/tutor_detail.html', {'tutor': tutor})
 
 User = get_user_model()  # Get the custom user model
 
+@login_required
 def tutor_add(request):
     if request.method == 'POST':
         form = TutorForm(request.POST)
@@ -48,6 +51,7 @@ def tutor_add(request):
 
     return render(request, 'tutors/tutors_add.html', {'form': form})
 
+@login_required
 def tutor_edit(request, pk):
     tutor = get_object_or_404(Tutor, pk=pk)
     if request.method == 'POST':

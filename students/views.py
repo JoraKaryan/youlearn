@@ -6,16 +6,20 @@ from django.db import transaction
 from .models import Student
 from .forms import StudentForm
 
+@login_required
 def students_list(request):
+    print('Students list')
     students = Student.objects.select_related('user').all()  # Use `select_related` for efficiency
     return render(request, 'students/students_list.html', {'students': students})
 
+@login_required
 def student_detail(request, student_id):
     student = get_object_or_404(Student.objects.select_related('user'), id=student_id)
     return render(request, 'students/student_detail.html', {'student': student})
 
-User = get_user_model()  # Use the custom user model
 
+User = get_user_model()  # Use the custom user model
+@login_required
 def student_add(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
@@ -48,6 +52,7 @@ def student_add(request):
 
     return render(request, 'students/students_add.html', {'form': form})
 
+@login_required
 def student_edit(request, pk):
     student = get_object_or_404(Student, pk=pk)
     if request.method == 'POST':
@@ -66,6 +71,7 @@ def student_edit(request, pk):
         form = StudentForm(instance=student, initial=initial_data)
     return render(request, 'students/students_form.html', {'form': form})
 
+@login_required
 def student_delete(request, pk):
     student = get_object_or_404(Student, pk=pk)
     if request.method == 'POST':
