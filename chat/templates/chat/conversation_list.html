@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Your Conversations</h2>
+    
+    {% for conversation in conversations %}
+        <div class="border p-3 mb-3">
+            <a href="{% url 'chat:conversation_detail' conversation.id %}">
+                {% for participant in conversation.participants.all %}
+                    {% if participant != request.user %}
+                        {{ participant.username }}
+                    {% endif %}
+                {% endfor %}
+            </a>
+        </div>
+    {% empty %}
+        <p>No conversations yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

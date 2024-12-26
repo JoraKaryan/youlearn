@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <div class="max-w-2xl mx-auto">
+        <!-- Chat Box -->
+        <div class="border rounded-lg shadow-sm">
+            <!-- Chat Header -->
+            <div class="border-b p-4 bg-gray-50">
+                <h2 class="text-xl font-semibold">
+                    {% for participant in conversation.participants.all %}
+                        {% if participant != request.user %}
+                            {{ participant.username }}
+                        {% endif %}
+                    {% endfor %}
+                </h2>
+                <a href="{% url 'chat:conversation_list' %}" class="text-blue-500 text-sm">&larr; Back to conversations</a>
+            </div>
+            
+            <!-- Messages Area -->
+            <div id="messages" class="h-96 overflow-y-auto p-4 space-y-4">
+                {% for message in conversation.messages.all %}
+                    <div class="{% if message.sender == request.user %}ml-auto{% endif %} max-w-[70%]">
+                        <div> <!--  class="{% if message.sender == request.user %}bg-blue-500 text-white{% else %}bg-gray-100{% endif %} rounded-lg p-3"> -->
+                            {{ message.content }}
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            <b>{{ message.sender.username }}</b> - {{ message.timestamp|date:"g:i A" }}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="text-center text-gray-500">
+                        No messages yet. Start the conversation!
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Message Input Form -->
+            <form method="post" class="border-t p-4">
+                {% csrf_token %}
+                <div class="flex gap-2">
+                    <input 
+                        type="text" 
+                        name="content" 
+                        class="flex-1 border rounded-lg px-4 py-2" 
+                        placeholder="Type your message..."
+                        required
+                    >
+                    <button 
+                        type="submit" 
+                        class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
+                    >
+                        Send
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-scroll to bottom of messages
+function scrollToBottom() {
+    const messages = document.getElementById('messages');
+    messages.scrollTop = messages.scrollHeight;
+}
+
+// Call on page load
+scrollToBottom();
+
+// Refresh messages every few seconds
+function updateMessages() {
+    fetch(`/chat/messages/${conversation.id}/`)
+        .then(response => response.json())
+        .then(data => {
+            // TODO: Update messages when implementing real-time updates
+            scrollToBottom();
+        });
+}
+
+// Update every 3 seconds
+setInterval(updateMessages, 3000);
+</script>
+{% endblock %}

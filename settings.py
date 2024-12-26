@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'groups',
     'tutors',
     'courses',
-    'chat'
+    'chat',
 ]
 
 MIDDLEWARE = [

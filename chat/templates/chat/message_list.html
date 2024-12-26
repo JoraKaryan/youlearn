@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <div class="max-w-2xl mx-auto">
+        <div class="border rounded-lg shadow-sm">
+            <div id="messages" class="h-96 overflow-y-auto p-4 space-y-4">
+                {% for message in messages %}
+                    <div class="{% if message.sender == request.user %}ml-auto{% endif %} max-w-[70%]">
+                        <div class="{% if message.sender == request.user %}bg-blue-500 text-white{% else %}bg-gray-100{% endif %} rounded-lg p-3">
+                            {{ message.content }}
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            {{ message.sender.username }} - {{ message.timestamp|date:"g:i A" }}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="text-center text-gray-500">
+                        No new messages.
+                    </div>
+                {% endfor %}
+            </div>
+
+            </div>
+    </div>
+</div>
+
+<script>
+// Similar logic as conversation_detail.html for scrolling and updates
+</script>
+{% endblock %}

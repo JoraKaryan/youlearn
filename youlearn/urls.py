@@ -13,4 +13,6 @@ urlpatterns = [
     path('', include('courses.urls')),
     path('', include('groups.urls')),
     path('', include('tutors.urls')),
+    path('chat/', include('chat.urls', namespace='chat'))
+
 ]
