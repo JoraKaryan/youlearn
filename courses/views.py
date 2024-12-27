@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth.decorators import login_required
 from .models import Course
 from .forms import CourseForm
 
@@ -7,11 +8,12 @@ def courses_list(request):
     courses = Course.objects.all()
     return render(request, 'courses/courses_list.html', {'courses': courses})
 
+
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     return render(request, 'courses/course_detail.html', {'course': course})
 
-
+@login_required
 def course_add(request):
     if request.method == 'POST':
         form = CourseForm(request.POST)
@@ -24,6 +26,7 @@ def course_add(request):
     
     return render(request, 'courses/courses_add.html', {'form': form})
 
+@login_required
 def course_edit(request, pk):
     course = get_object_or_404(Course, pk=pk)
     
@@ -36,6 +39,7 @@ def course_edit(request, pk):
         form = CourseForm(instance=course)
     return render(request, 'courses/courses_form.html', {'form': form})
 
+@login_required
 def course_delete(request, pk):
     course = get_object_or_404(Course, pk=pk)
     if request.method == 'POST':

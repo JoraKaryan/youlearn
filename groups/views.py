@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth.decorators import login_required
 from .models import Group
 from .forms import GroupForm
 
@@ -11,7 +12,7 @@ def group_detail(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     return render(request, 'groups/group_detail.html', {'group': group})
 
-
+@login_required
 def group_add(request):
     if request.method == 'POST':
         form = GroupForm(request.POST)
@@ -24,6 +25,7 @@ def group_add(request):
     
     return render(request, 'groups/groups_add.html', {'form': form})
 
+@login_required
 def group_edit(request, pk):
     group = get_object_or_404(Group, pk=pk)
     
@@ -36,6 +38,7 @@ def group_edit(request, pk):
         form = GroupForm(instance=group)
     return render(request, 'groups/groups_form.html', {'form': form})
 
+@login_required
 def group_delete(request, pk):
     group = get_object_or_404(Group, pk=pk)
     if request.method == 'POST':

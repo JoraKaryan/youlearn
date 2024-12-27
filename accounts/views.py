@@ -78,6 +78,10 @@ def login_view(request):
 def dashboard_view(request):
     return render(request, 'dashboard.html')
 
-# @login_required
+@login_required
 def personal_page(request):
     return render(request, 'personal_page.html')
+
+@login_required
+def log_out(request):
+    return render(request, 'homepage.html')
