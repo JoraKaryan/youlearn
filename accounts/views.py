@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
@@ -80,8 +80,9 @@ def dashboard_view(request):
 
 @login_required
 def personal_page(request):
-    return render(request, 'personal_page.html')
+    return render(request, 'profile/personal_page.html')
 
 @login_required
 def log_out(request):
-    return render(request, 'homepage.html')
+    logout(request)
+    return redirect('homepage')

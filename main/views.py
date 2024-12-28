@@ -4,7 +4,6 @@ from tutors.models import Tutor
 from groups.models import Group
 
 def homepage(request):
-
     students_count = Student.objects.count()
     tutors_count = Tutor.objects.count()
     groups_count = Group.objects.count()

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <!-- Profile Section -->
+    <section class="text-center mb-5">
+        <!-- Display profile picture or default image -->
+        <img src="{% if user.profile.picture %}{{ user.profile.picture.url }}{% else %}{% static 'images/boy-profile.svg' %}{% endif %}" 
+             alt="Profile Picture" 
+             class="rounded-circle mb-3" 
+             width="150" 
+             height="150">
+        <h2>{{ request.user.get_full_name }}</h2>
+        <p>{{ request.user.email }}</p>
+        <a href="#" class="btn btn-outline-primary">Update Personal Info</a>
+    </section>
+
+    <!-- Tabs Section -->
+    <ul class="nav nav-tabs" id="personalTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance" type="button" role="tab">Attendance</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="homework-tab" data-bs-toggle="tab" data-bs-target="#homework" type="button" role="tab">Homework</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat" type="button" role="tab">Chat</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-4" id="personalTabsContent">
+        <!-- Attendance Tab -->
+        <div class="tab-pane fade show active" id="attendance" role="tabpanel">
+            <h2>Attendance</h2>
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024-12-01</td>
+                            <td>Present</td>
+                            <td>First class introduction</td>
+                        </tr>
+                        <tr>
+                            <td>2024-12-02</td>
+                            <td>Present</td>
+                            <td>Variables and data types</td>
+                        </tr>
+                        <!-- Add rows dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Homework Tab -->
+        <div class="tab-pane fade" id="homework" role="tabpanel" style="max-height: 400px; overflow-y: auto;">
+            <h2>Python Introduction Homework</h2>
+
+            <!-- Homework #1 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>Homework #1</strong> 
+                    <span class="text-muted">(2024-12-01)</span>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Task 1:</strong> Write a Python program to print "Hello, World!".
+                            <span class="badge bg-success ms-2">Completed</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Task 2:</strong> Create a program that takes two numbers as input and prints their sum.
+                            <span class="badge bg-danger ms-2">Pending</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Homework #2 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>Homework #2</strong> 
+                    <span class="text-muted">(2024-12-03)</span>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Task 1:</strong> Implement a Python script to calculate factorials.
+                            <span class="badge bg-warning ms-2">In Progress</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Task 2:</strong> Write a Python function to check if a string is a palindrome.
+                            <span class="badge bg-danger ms-2">Pending</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Homework #3 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>Homework #3</strong> 
+                    <span class="text-muted">(2024-12-05)</span>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Task 1:</strong> Write a program to generate the Fibonacci sequence up to a given number.
+                            <span class="badge bg-success ms-2">Completed</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Task 2:</strong> Create a Python class to represent a Student with attributes for name and age.
+                            <span class="badge bg-warning ms-2">In Progress</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Homework #4 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>Homework #4</strong> 
+                    <span class="text-muted">(2024-12-10)</span>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Task 1:</strong> Write a Python script to reverse a string.
+                            <span class="badge bg-success ms-2">Completed</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Task 2:</strong> Create a Python program to check if a number is prime.
+                            <span class="badge bg-danger ms-2">Pending</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Task 3:</strong> Implement a Python function to calculate the nth Fibonacci number.
+                            <span class="badge bg-warning ms-2">In Progress</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Chat Tab -->
+        <div class="tab-pane fade" id="chat" role="tabpanel">
+            <h2>Chat</h2>
+            <p>Click the link below to access your chat conversations:</p>
+            <a href="{% url 'chat:conversation_list' %}" class="btn btn-outline-primary">Go to Chat</a>
+        </div>
+    </div>
+</div></br></br>
+{% endblock %}
