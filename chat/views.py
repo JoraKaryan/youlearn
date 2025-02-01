@@ -5,6 +5,8 @@ from django.db.models import Q
 from .models import Conversation, Message
 from students.models import Student
 from tutors.models import Tutor
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 @login_required
 def conversation_list(request):
@@ -35,28 +37,36 @@ def conversation_detail(request, conversation_id):
         participants=request.user
     )
     
-    # Handle new message submission
     if request.method == 'POST':
         content = request.POST.get('content')
         if content:
-            Message.objects.create(
+            message = Message.objects.create(
                 conversation=conversation,
                 sender=request.user,
                 content=content
             )
-            # Update conversation timestamp
-            conversation.save()  # This will update the updated_at field
+            # Broadcast the message to the room group
+            channel_layer = get_channel_layer()
+
+            if channel_layer is None:
+                print("Channel layer is not configured.")
+            else:
+                async_to_sync(channel_layer.group_send)(
+                    f'chat_{conversation_id}',
+                    {
+                        'type': 'chat_message',
+                        'message': message.content,
+                        'sender': message.sender.username,
+                    })
             
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({'status': 'success'})
-            return redirect('chat:conversation_detail', conversation_id=conversation_id)
+            
+            return JsonResponse({'status': 'success'})
 
     # Mark unread messages as read
     conversation.messages.filter(
         ~Q(sender=request.user), 
         is_read=False
     ).update(is_read=True)
-
 
     context = {
         'conversation': conversation,

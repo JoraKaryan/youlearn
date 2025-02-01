@@ -59,26 +59,107 @@
 </div>
 
 <script>
-// Auto-scroll to bottom of messages
-function scrollToBottom() {
-    const messages = document.getElementById('messages');
-    messages.scrollTop = messages.scrollHeight;
-}
+    // Connect to WebSocket
+    const chatSocket = new WebSocket(
+    (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
+    window.location.host +
+    '/ws/chat/' +
+    '{{ conversation.id }}' +
+    '/'
+);
+    
+    // Handle incoming messages
+    chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    const isCurrentUser = data.sender === '{{ request.user.username }}';
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('max-w-[70%]');
+    
+    if (isCurrentUser) {
+        messageElement.classList.add('ml-auto');
+    }
+    
+    messageElement.innerHTML = `
+        <div class="${isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-100'} rounded-lg p-3">
+            ${data.message}
+        </div>
+        <div class="text-xs text-gray-500 mt-1">
+            <b>${data.sender}</b> - Just now
+        </div>
+    `;
+    document.querySelector('#messages').appendChild(messageElement);
+    scrollToBottom();
+};
 
-// Call on page load
-scrollToBottom();
+chatSocket.onclose = function(e) {
+    console.error('Chat socket closed unexpectedly');
+    setTimeout(function() {
+        // Attempt to reconnect
+        window.location.reload();
+    }, 3000);
+};
 
-// Refresh messages every few seconds
-function updateMessages() {
-    fetch(`/chat/messages/${conversation.id}/`)
-        .then(response => response.json())
-        .then(data => {
-            // TODO: Update messages when implementing real-time updates
-            scrollToBottom();
+chatSocket.onerror = function(e) {
+    console.error('WebSocket error:', e);
+};
+    
+document.querySelector('form').onsubmit = async function(e) {
+    e.preventDefault();
+    const messageInput = document.querySelector('input[name="content"]');
+    const message = messageInput.value.trim();
+    
+    if (!message) return;
+
+    try {
+        // Send via WebSocket
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'sender': '{{ request.user.username }}',
+        }));
+
+        // Also send via HTTP POST to save in database
+        const response = await fetch('', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: new URLSearchParams({
+                'content': message,
+            }),
         });
-}
 
-// Update every 3 seconds
-setInterval(updateMessages, 3000);
-</script>
+        if (!response.ok) {
+            throw new Error('Failed to send message');
+        }
+
+        messageInput.value = '';
+    } catch (error) {
+        console.error('Error sending message:', error);
+        alert('Failed to send message. Please try again.');
+    }
+    return false;
+};
+    
+    // Auto-scroll to bottom of messages
+    function scrollToBottom() {
+        const messages = document.getElementById('messages');
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    // Initial scroll to bottom
+document.addEventListener('DOMContentLoaded', function() {
+    scrollToBottom();
+});
+
+// Keep scroll at bottom when new messages arrive
+const messagesContainer = document.querySelector('#messages');
+const observer = new MutationObserver(scrollToBottom);
+observer.observe(messagesContainer, {
+    childList: true,
+    subtree: true
+});
+
+    </script>
+
 {% endblock %}

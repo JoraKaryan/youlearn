@@ -22,6 +22,7 @@ ALLOWED_HOSTS = ["127.0.0.1",
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -35,6 +36,7 @@ INSTALLED_APPS = [
     'tutors',
     'courses',
     'chat',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -68,8 +70,14 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'youlearn.wsgi.application'
+# WSGI_APPLICATION = 'youlearn.wsgi.application'
+ASGI_APPLICATION = 'youlearn.asgi.application'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',  # Use in-memory layer for development
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
