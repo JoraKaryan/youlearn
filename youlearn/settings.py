@@ -22,6 +22,7 @@ ALLOWED_HOSTS = ["127.0.0.1",
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -34,7 +35,8 @@ INSTALLED_APPS = [
     'groups',
     'tutors',
     'courses',
-    'chat'
+    'chat',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -68,8 +70,14 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'youlearn.wsgi.application'
+# WSGI_APPLICATION = 'youlearn.wsgi.application'
+ASGI_APPLICATION = 'youlearn.asgi.application'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',  # Use in-memory layer for development
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -79,9 +87,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
         'ATOMIC_REQUESTS': True,
-        'OPTIONS': {
-            'timeout': 30,  # Set a timeout in seconds for locking issues
-        },
     }
 }
 
@@ -130,6 +135,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'courses' / 'static',
     BASE_DIR / 'groups' / 'static',
     BASE_DIR / 'chat' / 'static',
+
 ]
 
 # Default primary key field type

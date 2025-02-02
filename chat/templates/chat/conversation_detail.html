@@ -59,107 +59,131 @@
 </div>
 
 <script>
-    // Connect to WebSocket
     const chatSocket = new WebSocket(
-    (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
-    window.location.host +
-    '/ws/chat/' +
-    '{{ conversation.id }}' +
-    '/'
-);
+        (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
+        window.location.host +
+        '/ws/chat/' +
+        '{{ conversation.id }}' +
+        '/'
+    );
     
-    // Handle incoming messages
-    chatSocket.onmessage = function(e) {
-    const data = JSON.parse(e.data);
-    const isCurrentUser = data.sender === '{{ request.user.username }}';
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('max-w-[70%]');
-    
-    if (isCurrentUser) {
-        messageElement.classList.add('ml-auto');
-    }
-    
-    messageElement.innerHTML = `
-        <div class="${isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-100'} rounded-lg p-3">
-            ${data.message}
-        </div>
-        <div class="text-xs text-gray-500 mt-1">
-            <b>${data.sender}</b> - Just now
-        </div>
-    `;
-    document.querySelector('#messages').appendChild(messageElement);
-    scrollToBottom();
-};
+    // Keep track of processed messages
+    const processedMessages = new Map();
 
-chatSocket.onclose = function(e) {
-    console.error('Chat socket closed unexpectedly');
-    setTimeout(function() {
-        // Attempt to reconnect
-        window.location.reload();
-    }, 3000);
-};
-
-chatSocket.onerror = function(e) {
-    console.error('WebSocket error:', e);
-};
-    
-document.querySelector('form').onsubmit = async function(e) {
-    e.preventDefault();
-    const messageInput = document.querySelector('input[name="content"]');
-    const message = messageInput.value.trim();
-    
-    if (!message) return;
-
-    try {
-        // Send via WebSocket
-        chatSocket.send(JSON.stringify({
-            'message': message,
-            'sender': '{{ request.user.username }}',
-        }));
-
-        // Also send via HTTP POST to save in database
-        const response = await fetch('', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            },
-            body: new URLSearchParams({
-                'content': message,
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to send message');
+    function addMessage(message, sender, timestamp) {
+        // Create a unique key for this message
+        const messageKey = `${sender}-${message}-${timestamp}`;
+        
+        // Check if we've already processed this message
+        if (processedMessages.has(messageKey)) {
+            return;
         }
 
-        messageInput.value = '';
-    } catch (error) {
-        console.error('Error sending message:', error);
-        alert('Failed to send message. Please try again.');
+        // Add to processed messages
+        processedMessages.set(messageKey, true);
+        
+        // Clear old messages from the map after 5 seconds
+        setTimeout(() => {
+            processedMessages.delete(messageKey);
+        }, 5000);
+
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('max-w-[70%]');
+        
+        if (sender === '{{ request.user.username }}') {
+            messageElement.classList.add('ml-auto');
+        }
+
+        messageElement.innerHTML = `
+            <div class="${sender === '{{ request.user.username }}' ? 'bg-blue-500 text-white' : 'bg-gray-100'} rounded-lg p-3">
+                ${message}
+            </div>
+            <div class="text-xs text-gray-500 mt-1">
+                <b>${sender}</b> - ${timestamp}
+            </div>
+        `;
+        
+        document.querySelector('#messages').appendChild(messageElement);
+        scrollToBottom();
     }
-    return false;
-};
-    
-    // Auto-scroll to bottom of messages
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        // Only process messages from others immediately
+        if (data.sender !== '{{ request.user.username }}') {
+            const timestamp = new Date().toLocaleTimeString('en-US', { 
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+            addMessage(data.message, data.sender, timestamp);
+        }
+    };
+
+    document.querySelector('form').onsubmit = async function(e) {
+        e.preventDefault();
+        const messageInput = document.querySelector('input[name="content"]');
+        const message = messageInput.value.trim();
+        
+        if (!message) return;
+
+        const timestamp = new Date().toLocaleTimeString('en-US', { 
+            hour: 'numeric',
+            minute: '2-digit'
+        });
+
+        try {
+            // Display message immediately for sender
+            addMessage(message, '{{ request.user.username }}', timestamp);
+            
+            // Save to database
+            const response = await fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                body: new URLSearchParams({
+                    'content': message,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save message');
+            }
+
+            // Send via WebSocket
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'sender': '{{ request.user.username }}',
+                'timestamp': timestamp
+            }));
+
+            messageInput.value = '';
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Failed to send message. Please try again.');
+        }
+    };
+
     function scrollToBottom() {
         const messages = document.getElementById('messages');
         messages.scrollTop = messages.scrollHeight;
     }
 
     // Initial scroll to bottom
-document.addEventListener('DOMContentLoaded', function() {
-    scrollToBottom();
-});
+    document.addEventListener('DOMContentLoaded', scrollToBottom);
 
-// Keep scroll at bottom when new messages arrive
-const messagesContainer = document.querySelector('#messages');
-const observer = new MutationObserver(scrollToBottom);
-observer.observe(messagesContainer, {
-    childList: true,
-    subtree: true
-});
+    // Keep scroll at bottom when new messages arrive
+    const messagesContainer = document.querySelector('#messages');
+    const observer = new MutationObserver(scrollToBottom);
+    observer.observe(messagesContainer, {
+        childList: true,
+        subtree: true
+    });
 
-    </script>
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+</script>
 
 {% endblock %}
