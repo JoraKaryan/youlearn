@@ -9,7 +9,7 @@
             <a href="{% url 'chat:conversation_detail' conversation.id %}">
                 {% for participant in conversation.participants.all %}
                     {% if participant != request.user %}
-                        {{ participant.username }}
+                        {{ participant.first_name }} {{ participant.last_name }}
                     {% endif %}
                 {% endfor %}
             </a>

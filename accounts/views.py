@@ -20,6 +20,8 @@ def register(request):
                         email=form.cleaned_data['email'],
                         password=form.cleaned_data['password'],
                         username=form.cleaned_data['email'],
+                        first_name=form.cleaned_data['name'],
+                        last_name=form.cleaned_data['surname'],
                         # role=form.cleaned_data['role'],
                     )
 

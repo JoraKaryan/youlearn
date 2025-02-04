@@ -15,6 +15,8 @@ def conversation_list(request):
         participants=request.user
     ).prefetch_related('participants', 'messages').distinct()
 
+    print(conversations)
+
     # Get a list of all available students/tutors to start new conversations
     if request.user.role == 'student':
         available_users = Student.objects.exclude(user=request.user).select_related('user')

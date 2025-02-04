@@ -63,6 +63,8 @@ def student_add(request):
                     # Step 2: Create and save the CustomUser first
                     user = User.objects.create_user(
                         email=form.cleaned_data['email'],
+                        first_name=form.cleaned_data['name'],
+                        last_name=form.cleaned_data['surname'],
                         password='defaultpassword',  # Set a default password (should be updated later)
                         username=form.cleaned_data['email'],  # Assuming email is used as username
                         role='student'
