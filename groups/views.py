@@ -6,7 +6,24 @@ from .forms import GroupForm
 
 def groups_list(request):
     groups = Group.objects.all()
-    return render(request, 'groups/groups_list.html', {'groups': groups})
+    filters = {}
+
+    name_query = request.GET.get('name')
+    if name_query:
+        groups = groups.filter(name__icontains=name_query)
+        filters['name'] = name_query
+
+    tutor_query = request.GET.get('tutor')
+    if tutor_query:
+        groups = groups.filter(tutor__name__icontains=tutor_query)  # Filter by tutor's name
+        filters['tutor'] = tutor_query
+
+    course_query = request.GET.get('course')
+    if course_query:
+        groups = groups.filter(course__name__icontains=course_query) # Filter by course's name
+        filters['course'] = course_query
+
+    return render(request, 'groups/groups_list.html', {'groups': groups, 'filters': filters})
 
 def group_detail(request, group_id):
     group = get_object_or_404(Group, id=group_id)

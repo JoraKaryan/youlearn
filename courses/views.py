@@ -3,11 +3,36 @@ from django.contrib.auth.decorators import login_required
 from .models import Course
 from .forms import CourseForm
 
-
 def courses_list(request):
     courses = Course.objects.all()
-    return render(request, 'courses/courses_list.html', {'courses': courses})
+    filters = {}
 
+    name_query = request.GET.get('name')
+    if name_query:
+        courses = courses.filter(name__icontains=name_query)
+        filters['name'] = name_query
+
+    description_query = request.GET.get('description')
+    if description_query:
+        courses = courses.filter(description__icontains=description_query)
+        filters['description'] = description_query
+
+    duration_query = request.GET.get('duration')
+    if duration_query:
+        courses = courses.filter(duration__icontains=duration_query)  # Or exact match: duration=duration_query
+        filters['duration'] = duration_query
+
+    price_query = request.GET.get('price')
+    if price_query:
+        try:
+            price = float(price_query) #try to convert to float
+            courses = courses.filter(price=price) #if it is number filter by number
+            filters['price'] = price_query
+        except ValueError:
+            pass #if not number do not filter by price
+
+
+    return render(request, 'courses/courses_list.html', {'courses': courses, 'filters': filters})
 
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id)

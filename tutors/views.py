@@ -8,8 +8,37 @@ from .forms import TutorForm
 
 @login_required
 def tutors_list(request):
-    tutors = Tutor.objects.select_related('user').all()  # Optimize query with select_related
-    return render(request, 'tutors/tutors_list.html', {'tutors': tutors})
+    tutors = Tutor.objects.select_related('user').all()
+    filters = {}
+
+    name_query = request.GET.get('name')
+    if name_query:
+        tutors = tutors.filter(name__icontains=name_query)
+        filters['name'] = name_query
+
+    surname_query = request.GET.get('surname')
+    if surname_query:
+        tutors = tutors.filter(surname__icontains=surname_query)
+        filters['surname'] = surname_query
+
+    email_query = request.GET.get('email')
+    if email_query:
+        tutors = tutors.filter(user__email__icontains=email_query)  # Use user__email for related email
+        filters['email'] = email_query
+
+    experience_query = request.GET.get('experience')
+    if experience_query:
+        tutors = tutors.filter(experience__icontains=experience_query)
+        filters['experience'] = experience_query
+
+    information_query = request.GET.get('information')
+    if information_query:
+        tutors = tutors.filter(information__icontains=information_query)
+        filters['information'] = information_query
+
+
+    return render(request, 'tutors/tutors_list.html', {'tutors': tutors, 'filters': filters})
+
 
 @login_required
 def tutor_detail(request, tutor_id):

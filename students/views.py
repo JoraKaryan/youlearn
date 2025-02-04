@@ -8,9 +8,42 @@ from .forms import StudentForm
 
 @login_required
 def students_list(request):
-    print('Students list')
-    students = Student.objects.select_related('user').all()  # Use `select_related` for efficiency
-    return render(request, 'students/students_list.html', {'students': students})
+    students = Student.objects.select_related('user').all()
+    filters = {}  # Dictionary to store filter values
+
+    # Filtering logic for each field
+    name_query = request.GET.get('name')
+    if name_query:
+        students = students.filter(name__icontains=name_query)
+        filters['name'] = name_query
+
+    surname_query = request.GET.get('surname')
+    if surname_query:
+        students = students.filter(surname__icontains=surname_query)
+        filters['surname'] = surname_query
+
+    email_query = request.GET.get('email')
+    if email_query:
+        students = students.filter(user__email__icontains=email_query)
+        filters['email'] = email_query
+
+    group_query = request.GET.get('group')
+    if group_query:
+        students = students.filter(group__icontains=group_query)
+        filters['group'] = group_query
+
+    phone_query = request.GET.get('phone')
+    if phone_query:
+        students = students.filter(phone__icontains=phone_query)
+        filters['phone'] = phone_query
+
+    passport_query = request.GET.get('passport')
+    if passport_query:
+        students = students.filter(passport__icontains=passport_query)
+        filters['passport'] = passport_query
+
+
+    return render(request, 'students/students_list.html', {'students': students, 'filters': filters})
 
 @login_required
 def student_detail(request, student_id):
