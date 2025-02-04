@@ -20,7 +20,7 @@ def register(request):
                         email=form.cleaned_data['email'],
                         password=form.cleaned_data['password'],
                         username=form.cleaned_data['email'],
-                        role=form.cleaned_data['role'],
+                        # role=form.cleaned_data['role'],
                     )
 
                     # Common fields for both Student and Tutor
@@ -36,8 +36,8 @@ def register(request):
                         # Add passport only for students
                         common_fields['passport'] = form.cleaned_data['passport']
                         Student.objects.create(**common_fields)
-                    elif user.role == 'tutor':
-                        Tutor.objects.create(**common_fields)
+                    # elif user.role == 'tutor':
+                    #     Tutor.objects.create(**common_fields)
 
                     # Optionally log the user in
                     login(request, user)
@@ -46,7 +46,7 @@ def register(request):
             except Exception as e:
                 print(f"Error: {e}")
                 # Log the error (avoid displaying detailed errors to the user)
-                return render(request, 'registration/register.html', {
+                return render(request, 'accounts/registration/register.html', {
                     'form': form,
                     'error': 'An error occurred during registration. Please try again.'
                 })

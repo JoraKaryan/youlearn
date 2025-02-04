@@ -1,18 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="mb-4">Course Detail</h1>
-    
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <h3>{{ course.name }}</h3>
-            <p><strong>Name:</strong> {{ course.name }}</p>
-            <p><strong>Description:</strong> {{ course.description }}</p>
-            <p><strong>Duration:</strong> {{ course.duration }}</p>
-            <p><strong>Price:</strong> {{ course.price }}</p>
+<div class="container py-5">  <!— Added py-5 for vertical padding -->
+    <div class="row justify-content-center">  <!— Center the card horizontally -->
+        <div class="col-md-8">  <!— Adjust width as needed -->
+            <div class="card shadow-sm">
+                <div class="card-body p-4">  <!— Added p-4 for padding -->
+                    <h3 class="card-title">{{ course.name }}</h3>  <!— Use card-title class -->
 
-            <a href="{% url 'courses_list' %}" class="btn btn-secondary mt-3">Back to Courses List</a>
+                    <dl class="row">  <!— Use a definition list for better structure -->
+                        <dt class="col-sm-3">Name:</dt>
+                        <dd class="col-sm-9">{{ course.name }}</dd>
+
+                        <dt class="col-sm-3">Description:</dt>
+                        <dd class="col-sm-9">{{ course.description }}</dd>
+
+                        <dt class="col-sm-3">Duration:</dt>
+                        <dd class="col-sm-9">{{ course.duration }}</dd>
+
+                        <dt class="col-sm-3">Price:</dt>
+                        <dd class="col-sm-9">{{ course.price }}</dd>
+                    </dl>
+
+                    <div class="d-grid gap-2">  <!— Use d-grid for better button layout -->
+                        <a href="{% url 'courses_list' %}" class="btn btn-secondary mt-3">Back to Courses List</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -1,19 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="mb-4">Tutor Detail</h1>
-    
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <h3>{{ tutor.name }} {{ tutor.surname }}</h3>
-            <p><strong>Name:</strong> {{ tutor.name }}</p>
-            <p><strong>Surname:</strong> {{ tutor.surname }}</p>
-            <p><strong>Email:</strong> {{ tutor.email }}</p>
-            <p><strong>Experience:</strong> {{ tutor.experience }}</p>
-            <p><strong>Information:</strong> {{ tutor.information }}</p>
-            
-            <a href="{% url 'tutors_list' %}" class="btn btn-secondary mt-3">Back to Tutors List</a>
+<div class="container py-5">  <!— Added py-5 for vertical padding -->
+    <div class="row justify-content-center">  <!— Center the card horizontally -->
+        <div class="col-md-8">  <!— Adjust width as needed -->
+            <div class="card shadow-sm">
+                <div class="card-body p-4">  <!— Added p-4 for padding -->
+                    <h3 class="card-title">{{ tutor.name }} {{ tutor.surname }}</h3>  <!— Use card-title class -->
+
+                    <dl class="row">  <!— Use a definition list for better structure -->
+                        <dt class="col-sm-3">Name:</dt>
+                        <dd class="col-sm-9">{{ tutor.name }}</dd>
+
+                        <dt class="col-sm-3">Surname:</dt>
+                        <dd class="col-sm-9">{{ tutor.surname }}</dd>
+
+                        <dt class="col-sm-3">Email:</dt>
+                        <dd class="col-sm-9">{{ tutor.email }}</dd>
+
+                        <dt class="col-sm-3">Experience:</dt>
+                        <dd class="col-sm-9">{{ tutor.experience }}</dd>
+
+                        <dt class="col-sm-3">Information:</dt>
+                        <dd class="col-sm-9">{{ tutor.information }}</dd>
+                    </dl>
+
+                    <div class="d-grid gap-2">  <!— Use d-grid for better button layout -->
+                        <a href="{% url 'tutors_list' %}" class="btn btn-secondary mt-3">Back to Tutors List</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

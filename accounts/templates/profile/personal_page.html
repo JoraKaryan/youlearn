@@ -6,7 +6,7 @@
     <!-- Profile Section -->
     <section class="text-center mb-5">
         <!-- Display profile picture or default image -->
-        <img src="{% if user.profile.picture %}{{ user.profile.picture.url }}{% else %}{% static 'images/boy-profile.svg' %}{% endif %}" 
+        <img src="{% if user.profile.picture %}{{ user.profile.picture.url }}{% else %}{% static 'accounts/images/boy-profile.svg' %}{% endif %}" 
              alt="Profile Picture" 
              class="rounded-circle mb-3" 
              width="150" 

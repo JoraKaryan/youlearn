@@ -8,15 +8,18 @@ class CustomUserCreationForm(forms.ModelForm):
     surname = forms.CharField(max_length=50, required=True)
     birthday = forms.DateField(
         required=False,
-        widget=DateInput(attrs={'type': 'date'})  # Use HTML5 date input
+        widget=DateInput(attrs={'type': 'date'})
     )
-    phone = forms.CharField(max_length=15, required=False, initial='')
     passport = forms.CharField(max_length=20, required=True)
+    phone = forms.CharField(max_length=15, required=False, initial='')
+    email = forms.EmailField(max_length=254, required=True)  # Email should be EmailField
+    password = forms.CharField(widget=forms.PasswordInput(), required=True)
     password_confirm = forms.CharField(widget=forms.PasswordInput(), required=True)
+
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'password', 'role']
+        fields = ['name', 'surname', 'birthday', 'passport', 'phone', 'email', 'password'] # Explicit field order
         widgets = {'password': forms.PasswordInput()}
 
     def clean_passport(self):
