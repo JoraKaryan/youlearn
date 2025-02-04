@@ -78,7 +78,7 @@
         if (processedMessages.has(messageKey)) {
             return;
         }
-
+    
         // Add to processed messages
         processedMessages.set(messageKey, true);
         
@@ -86,16 +86,16 @@
         setTimeout(() => {
             processedMessages.delete(messageKey);
         }, 5000);
-
+    
         const messageElement = document.createElement('div');
         messageElement.classList.add('max-w-[70%]');
         
         if (sender === '{{ request.user.username }}') {
             messageElement.classList.add('ml-auto');
         }
-
+    
         messageElement.innerHTML = `
-            <div class="${sender === '{{ request.user.username }}' ? 'bg-blue-500 text-white' : 'bg-gray-100'} rounded-lg p-3">
+            <div> <!-- class="${sender === '{{ request.user.username }}' ? 'bg-blue-500 text-white' : 'bg-gray-100'} rounded-lg p-3">  -->
                 ${message}
             </div>
             <div class="text-xs text-gray-500 mt-1">
@@ -109,61 +109,58 @@
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        // Only process messages from others immediately
-        if (data.sender !== '{{ request.user.username }}') {
-            const timestamp = new Date().toLocaleTimeString('en-US', { 
-                hour: 'numeric',
-                minute: '2-digit'
-            });
-            addMessage(data.message, data.sender, timestamp);
-        }
-    };
-
-    document.querySelector('form').onsubmit = async function(e) {
-        e.preventDefault();
-        const messageInput = document.querySelector('input[name="content"]');
-        const message = messageInput.value.trim();
-        
-        if (!message) return;
-
         const timestamp = new Date().toLocaleTimeString('en-US', { 
             hour: 'numeric',
             minute: '2-digit'
         });
-
-        try {
-            // Display message immediately for sender
-            addMessage(message, '{{ request.user.username }}', timestamp);
-            
-            // Save to database
-            const response = await fetch('', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                },
-                body: new URLSearchParams({
-                    'content': message,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to save message');
-            }
-
-            // Send via WebSocket
-            chatSocket.send(JSON.stringify({
-                'message': message,
-                'sender': '{{ request.user.username }}',
-                'timestamp': timestamp
-            }));
-
-            messageInput.value = '';
-        } catch (error) {
-            console.error('Error sending message:', error);
-            alert('Failed to send message. Please try again.');
-        }
+        addMessage(data.message, data.sender, timestamp);
     };
+
+    document.querySelector('form').onsubmit = async function(e) {
+    e.preventDefault();
+    const messageInput = document.querySelector('input[name="content"]');
+    const message = messageInput.value.trim();
+    
+    if (!message) return;
+
+    const timestamp = new Date().toLocaleTimeString('en-US', { 
+        hour: 'numeric',
+        minute: '2-digit'
+    });
+
+    try {
+        // Display message immediately for sender
+        addMessage(message, '{{ request.user.username }}', timestamp);
+        
+        // Save to database
+        const response = await fetch('', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: new URLSearchParams({
+                'content': message,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to save message');
+        }
+
+        // Send via WebSocket
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'sender': '{{ request.user.username }}',
+            'timestamp': timestamp  // Include the timestamp
+        }));
+
+        messageInput.value = '';
+    } catch (error) {
+        console.error('Error sending message:', error);
+        alert('Failed to send message. Please try again.');
+    }
+};
 
     function scrollToBottom() {
         const messages = document.getElementById('messages');
@@ -180,6 +177,7 @@
         childList: true,
         subtree: true
     });
+    
 
     chatSocket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
