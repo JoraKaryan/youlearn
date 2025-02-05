@@ -3,6 +3,9 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import F, Q, Value
+from django.db.models.functions import Concat
+
 from .forms import CustomUserCreationForm, CustomLoginForm
 from .models import CustomUser
 from students.models import Student
@@ -82,7 +85,10 @@ def dashboard_view(request):
 
 @login_required
 def personal_page(request):
-    return render(request, 'profile/personal_page.html')
+    students = Student.objects.filter(~Q(id=request.user.id)).annotate(
+        fullname=Concat(F('name'), Value(' '), F('surname'))
+    )
+    return render(request, 'profile/personal_page.html', {'students': students})
 
 @login_required
 def log_out(request):
