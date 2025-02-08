@@ -53,30 +53,29 @@ def tutor_add(request):
         form = TutorForm(request.POST)
         if form.is_valid():
             try:
-                # Step 1: Use transaction to ensure both user and tutor are saved correctly
                 with transaction.atomic():
-                    # Step 2: Create and save the CustomUser first
+                    # Extract password
+                    password = form.cleaned_data['password']
+
+                    # Create the user
                     user = User.objects.create_user(
                         email=form.cleaned_data['email'],
                         first_name=form.cleaned_data['name'],
                         last_name=form.cleaned_data['surname'],
-                        password='defaultpassword',  # Set a default password (should be updated later)
-                        username=form.cleaned_data['email'],  # Assuming email is used as username
+                        username=form.cleaned_data['email'],
                         role='tutor'
                     )
-                    user.save()  # Ensure the user is saved before creating the tutor
+                    user.set_password(password)  # Securely store password
+                    user.save()
 
-                    # Step 3: Create the Tutor instance and associate it with the user
-                    tutor = form.save(commit=False)  # Don't save the tutor yet
-                    tutor.user = user  # Associate the created user with the tutor
-                    tutor.save()  # Save the tutor
+                    # Create the tutor profile
+                    tutor = form.save(commit=False)
+                    tutor.user = user
+                    tutor.save()
 
-                return redirect('tutors_list')  # Redirect to the tutors list or desired page
+                return redirect('tutors_list')  
             except Exception as e:
-                # Handle any exceptions that occur during the transaction
-                print(f"Error: {e}")
                 return render(request, 'tutors/tutors_add.html', {'form': form, 'error': str(e)})
-
     else:
         form = TutorForm()
 
