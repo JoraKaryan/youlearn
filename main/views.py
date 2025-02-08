@@ -8,3 +8,7 @@ def homepage(request):
     tutors_count = Tutor.objects.count()
     groups_count = Group.objects.count()
     return render(request, 'main/homepage.html', {'students_count': students_count, 'tutors_count': tutors_count, 'groups_count': groups_count})
+
+def no_permission(request):
+    return render(request, 'main/no_permission.html', status=403)
+

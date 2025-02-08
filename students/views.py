@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import transaction
 from .models import Student
 from .forms import StudentForm
@@ -53,6 +53,7 @@ def student_detail(request, student_id):
 
 User = get_user_model()  # Use the custom user model
 @login_required
+# @user_passes_test(lambda u: u.is_tutor)
 def student_add(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
