@@ -115,6 +115,48 @@
         });
         addMessage(data.message, data.sender, timestamp);
     };
+    
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+        setTimeout(function() {
+            connectWebSocket();
+        }, 1000);
+    };
+    
+    chatSocket.onerror = function(e) {
+        console.error('WebSocket error:', e);
+    };
+    
+    function connectWebSocket() {
+        chatSocket = new WebSocket(
+            (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
+            window.location.host +
+            '/ws/chat/' +
+            '{{ conversation.id }}' +
+            '/'
+        );
+        
+        // Reattach event handlers
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const timestamp = new Date().toLocaleTimeString('en-US', { 
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+            addMessage(data.message, data.sender, timestamp);
+        };
+        
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+            setTimeout(function() {
+                connectWebSocket();
+            }, 1000);
+        };
+        
+        chatSocket.onerror = function(e) {
+            console.error('WebSocket error:', e);
+        };
+    }
 
     document.querySelector('form').onsubmit = async function(e) {
     e.preventDefault();
