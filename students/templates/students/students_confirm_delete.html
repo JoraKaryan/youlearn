@@ -5,6 +5,8 @@
     <h1 class="mb-4">Delete Student</h1>
     
     <div class="card shadow-sm">
+        {% if request.user.is_tutor %}
+
         <div class="card-body">
             <p class="lead">Are you sure you want to delete the student <strong>{{ student.name }} {{ student.surname }}</strong>?</p>
             
@@ -14,6 +16,13 @@
                 <a href="{% url 'students_list' %}" class="btn btn-secondary">Cancel</a>
             </form>
         </div>
+        {% else %}
+        <div class="container">
+            <h2>You have no permission</h2>
+            <p>You do not have the necessary permissions to access this page.</p>
+            <a href="{% url 'homepage' %}">Return to Home</a>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
