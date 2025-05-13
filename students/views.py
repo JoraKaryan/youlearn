@@ -8,7 +8,9 @@ from .forms import StudentForm
 
 @login_required
 def students_list(request):
-    students = Student.objects.select_related('user').all()
+    # Order by name first, then surname for consistent sorting
+    students = Student.objects.select_related('user').all().order_by('name', 'surname')
+    
     filters = {}  # Dictionary to store filter values
 
     # Filtering logic for each field
@@ -41,7 +43,6 @@ def students_list(request):
     if passport_query:
         students = students.filter(passport__icontains=passport_query)
         filters['passport'] = passport_query
-
 
     return render(request, 'students/students_list.html', {'students': students, 'filters': filters})
 
