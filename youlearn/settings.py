@@ -13,13 +13,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost",
     "3.86.113.168",
-    "1e3a-5-77-205-33.ngrok-free.app",
+    "2219-5-77-205-33.ngrok-free.app",
     "0.0.0.0",
     "127.0.0.1",
     "100.67.66.121"]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://1e3a-5-77-205-33.ngrok-free.app"
+    "https://2219-5-77-205-33.ngrok-free.app"
 ]
 
 
@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'main.middleware.PermissionMiddleware',
+    'main.middleware.APILoggingMiddleware',  # Add this line
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -147,3 +148,36 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/api_requests.log'),
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'api_requests': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
